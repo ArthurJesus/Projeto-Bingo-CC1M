@@ -1,0 +1,181 @@
+body {
+    margin: 0;
+    margin-bottom: 50px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+header {
+    background-color: green;
+    color: white;
+    height: 100px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    font-size: 32px;
+    font-weight: bold;
+}
+
+footer {
+    position: fixed;
+    bottom: 0px;
+    height: 30px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: green;
+    color: white;
+}
+
+.container {
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-around;
+}
+
+#gerar {
+    background-color: lightskyblue;
+    color: white;
+    height: 50px;
+    width: 150px;
+    border: 3px solid lightskyblue;
+    cursor: pointer;
+    border-radius: 15px;
+    font-size: 20px;
+    margin: 20px 20px 0 0;
+    font-weight: bold;
+}
+
+#gerar:hover{
+    background-color: lightblue;
+    border: 3px solid lightblue;
+}
+
+#gerar:active{
+    background-color: lightsteelblue;
+    border: 3px solid lightsteelblue;
+}
+
+#resetar {
+    background-color: lightseagreen;
+    color: white;
+    height: 50px;
+    width: 150px;
+    border: 3px solid lightseagreen;
+    cursor: pointer;
+    border-radius: 15px;
+    font-size: 20px;
+    margin: 20px 0 0 20px;
+    font-weight: bold;
+}
+
+#resetar:hover{
+    background-color: lightgreen;
+    border: 3px solid lightgreen;
+}
+
+#resetar:active{
+    background-color: greenyellow;
+    border: 3px solid greenyellow;
+}
+
+#iniciar {
+    background-color: lightcoral;
+    color: white;
+    height: 50px;
+    width: 150px;
+    border: 3px solid lightcoral;
+    cursor: pointer;
+    border-radius: 15px;
+    font-size: 20px;
+    margin: 20px;
+    font-weight: bold;
+}
+
+#iniciar:hover{
+    background-color: lightsalmon;
+    border: 3px solid lightsalmon;
+}
+
+#iniciar:active{
+    background-color: lightpink;
+    border: 3px solid lightpink;
+}
+
+#numeros-sorteados {
+    font-size: 20px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    word-break: normal;
+}
+
+.container-numeros {
+    width: 30%;
+}
+
+.cartela-container {
+    flex-basis: calc(50% - 10px);
+    margin-bottom: 20px;
+}
+
+.cartela {
+    border: 2px solid black;
+    width: 300px;
+    height: 300px;
+    border-collapse: collapse;
+}
+
+.cartela td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid black;
+    font-size: 24px;
+}
+
+.cartela td:not(:nth-child(6n)) {
+    border-right: none;
+}
+
+.cartela tr:not(:last-child) td {
+    border-bottom: none;
+}
+
+.cartela th {
+    padding: 10px;
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    background-color: lightskyblue;
+}
+
+.sorteado {
+    background-color: green;
+}
+
+.numero-sorteado {
+    display: inline-flex;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    text-align: center;
+    justify-content: center;
+    margin: 5px;
+    background-color: lightgray;
+    border: 1px solid black;
+} 
+
+.jogador {
+    display: inline-block;
+    margin-right: 20px;
+    margin-top: 15px;
+}
