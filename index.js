@@ -76,6 +76,52 @@ function desenharCartela(nome, cartela) {
     div.appendChild(jogadorDiv);
 }
 
+// Função para tocar o som
+function tocarSom() {
+    const som = document.getElementById("som-sorteio");
+    som.currentTime = 0; // Reinicia o som caso clique rápido
+    som.play();
+}
+
+// Função central de sorteio (Modo Manual)
+function sortearUm() {
+    if (jogadores.length < 2) {
+        alert("Adicione pelo menos 2 jogadores antes!");
+        return;
+    }
+    
+    if (numerosSorteadosGlobal.length >= 75) {
+        alert("Todos os números já foram sorteados!");
+        return;
+    }
+
+    var numeroSorteado;
+    do {
+        numeroSorteado = Math.floor(Math.random() * 75) + 1;
+    } while (numerosSorteadosGlobal.includes(numeroSorteado));
+
+    numerosSorteadosGlobal.push(numeroSorteado);
+    
+    // Feedback visual e sonoro
+    tocarSom();
+    
+    var painelSorteio = document.getElementById("numeros-sorteados");
+    var bola = document.createElement("div");
+    bola.classList.add("numero-sorteado");
+    bola.innerText = numeroSorteado;
+    painelSorteio.appendChild(bola);
+
+    marcarNumeroSorteado(numeroSorteado);
+
+    var ganhadores = verificarGanhadores();
+    if (ganhadores.length > 0) {
+        sorteioEmAndamento = false;
+        clearInterval(intervalo);
+        alert("BINGO! Vencedores: " + ganhadores.map(g => g.nomeJogador).join(", "));
+    }
+}
+
+// Ajuste na função Iniciar Jogo (Modo Automático)
 function iniciarJogo() {
     if (jogadores.length < 2) {
         alert("É necessário pelo menos 2 jogadores!");
@@ -84,38 +130,16 @@ function iniciarJogo() {
     if (sorteioEmAndamento) return;
 
     sorteioEmAndamento = true;
-    var painelSorteio = document.getElementById("numeros-sorteados");
-    painelSorteio.innerHTML = "";
+    document.getElementById("numeros-sorteados").innerHTML = "";
     numerosSorteadosGlobal = [];
 
     intervalo = setInterval(function() {
-        if (numerosSorteadosGlobal.length >= 75) {
+        if (numerosSorteadosGlobal.length >= 75 || !sorteioEmAndamento) {
             clearInterval(intervalo);
             return;
         }
-
-        var numeroSorteado;
-        do {
-            numeroSorteado = Math.floor(Math.random() * 75) + 1;
-        } while (numerosSorteadosGlobal.includes(numeroSorteado));
-
-        numerosSorteadosGlobal.push(numeroSorteado);
-        
-        // Criar elemento visual da bola
-        var bola = document.createElement("div");
-        bola.classList.add("numero-sorteado");
-        bola.innerText = numeroSorteado;
-        painelSorteio.appendChild(bola);
-
-        marcarNumeroSorteado(numeroSorteado);
-
-        var ganhadores = verificarGanhadores();
-        if (ganhadores.length > 0) {
-            clearInterval(intervalo);
-            sorteioEmAndamento = false;
-            alert("BINGO! Vencedores: " + ganhadores.map(g => g.nomeJogador).join(", "));
-        }
-    }, 500); // 500ms para dar tempo de ver a marcação
+        sortearUm(); // Chama a função que já tem a lógica e o som
+    }, 1500); // 1.5 segundos entre números no automático
 }
 
 function marcarNumeroSorteado(numero) {
