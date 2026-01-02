@@ -4,21 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="index.css">
-    <title>Bingo Mobile</title>
+    <title>Bingo Master</title>
 </head>
 <body>
-    <header>Jogo de Bingo</header>
+    <header>Bingo Master</header>
     
     <main class="container">
+        <details class="opcoes-guia">
+            <summary>⚙️ Configurações do Jogo</summary>
+            <div class="opcoes-content">
+                <label>
+                    <input type="checkbox" id="marcar-auto" checked> Marcar cartela automaticamente
+                </label>
+                <div class="controle-velocidade">
+                    <span>Velocidade do Sorteio:</span>
+                    <select id="velocidade">
+                        <option value="3000">Lento (3s)</option>
+                        <option value="1500" selected>Normal (1.5s)</option>
+                        <option value="500">Rápido (0.5s)</option>
+                    </select>
+                </div>
+            </div>
+        </details>
+
         <div class="jogo">
             <div class="grupo-botoes">
-                <button id="gerar" onclick="gerarCartela()">Gerar Cartela</button>
+                <button id="gerar" onclick="gerarCartela()">Nova Cartela</button>
                 <button id="resetar" onclick="reiniciarJogo()">Reiniciar</button>
             </div>
             
             <div class="grupo-botoes">
-                <button id="iniciar" onclick="iniciarJogo()">Auto</button>
-                <button id="sortear-um" onclick="sortearUm()">Sortear</button>
+                <button id="iniciar" onclick="iniciarJogo()">Auto Sorteio</button>
+                <button id="sortear-um" onclick="sortearUm()">Sortear Manual</button>
             </div>
 
             <section id="area-cartela">
