@@ -11,14 +11,23 @@
     
     <main class="container">
         <details class="opcoes-guia" id="menu-config">
-            <summary>⚙️ Configurações e Opções</summary>
+            <summary>⚙️ Configurações e Papel</summary>
             <div class="opcoes-content">
-                <label class="switch-label">
+                <div class="controle-papel">
+                    <span>Eu sou o:</span>
+                    <select id="papel-usuario" onchange="alternarPapel()">
+                        <option value="completo">Mestre (Tudo)</option>
+                        <option value="jogador">Jogador (Apenas Cartela)</option>
+                        <option value="sorteador">Sorteador (Apenas Globo)</option>
+                    </select>
+                </div>
+
+                <label class="switch-label" id="label-marcar-auto">
                     <input type="checkbox" id="marcar-auto" checked> 
                     <span>Marcar automaticamente</span>
                 </label>
                 
-                <div class="controle-velocidade">
+                <div class="controle-velocidade" id="div-velocidade">
                     <span>Velocidade:</span>
                     <select id="velocidade">
                         <option value="3000">Lento (3s)</option>
@@ -30,12 +39,12 @@
         </details>
 
         <div class="jogo">
-            <div class="grupo-botoes">
+            <div class="grupo-botoes" id="grupo-jogador">
                 <button id="gerar" onclick="gerarCartela()">Nova Cartela</button>
                 <button id="resetar" onclick="reiniciarJogo()">Reiniciar</button>
             </div>
             
-            <div class="grupo-botoes">
+            <div class="grupo-botoes" id="grupo-sorteador">
                 <button id="iniciar" onclick="iniciarJogo()">Auto Sorteio</button>
                 <button id="sortear-um" onclick="sortearUm()">Sortear</button>
             </div>
@@ -45,7 +54,7 @@
             </section>
         </div>
 
-        <div class="container-numeros">
+        <div class="container-numeros" id="painel-sorteio">
             <h3>Sorteados:</h3>
             <div id="numeros-sorteados"></div>
         </div>
