@@ -3,62 +3,47 @@ var intervalo = null;
 var sorteioEmAndamento = false;
 var numerosSorteadosGlobal = [];
 
-function alternarModo() {
-    const isAuto = document.getElementById("modo-auto").checked;
-    if (isAuto) {
-        document.body.classList.add("modo-auto-ativo");
-        if (numerosSorteadosGlobal.length > 0) {
-            numerosSorteadosGlobal.forEach(num => marcarNoDOM(num));
-        }
-    } else {
-        document.body.classList.remove("modo-auto-ativo");
-    }
-}
-
-function marcarManual(celula) {
-    const isAuto = document.getElementById("modo-auto").checked;
-    if (isAuto) return; 
-    celula.classList.toggle("sorteado");
-}
-
-function gritarBingo() {
-    if (jogadores.length === 0) return alert("Gere uma cartela primeiro!");
+// NOVA FUNÇÃO: Alterna entre Iniciar e Parar
+function toggleAutoSorteio() {
+    const btn = document.getElementById("btn-auto");
     
-    let nomesGanhadores = [];
-
-    document.querySelectorAll(".jogador").forEach((div, index) => {
-        let celulasMarcadas = div.querySelectorAll(".sorteado");
-        
-        if (celulasMarcadas.length === 25) {
-            let erroEncontrado = false;
-            celulasMarcadas.forEach(td => {
-                let txt = td.innerText;
-                if (txt !== "X") {
-                    let num = parseInt(txt);
-                    if (!numerosSorteadosGlobal.includes(num)) erroEncontrado = true;
-                }
-            });
-
-            if (!erroEncontrado) nomesGanhadores.push(jogadores[index].nome);
-        }
-    });
-
-    if (nomesGanhadores.length > 0) {
-        finalizarJogo(nomesGanhadores);
+    if (sorteioEmAndamento) {
+        // Se já está rodando, a gente para
+        pararAutoSorteio();
+        btn.innerText = "Iniciar Auto";
+        btn.style.backgroundColor = "#e74c3c"; // Vermelho
     } else {
-        alert("❌ BINGO FALSO! ❌\nVerifique suas marcações.");
+        // Se está parado, a gente inicia
+        if (jogadores.length < 1) return alert("Gere uma cartela primeiro!");
+        if (numerosSorteadosGlobal.length >= 75) return alert("Todas as bolas já saíram!");
+        
+        sorteioEmAndamento = true;
+        btn.innerText = "Parar Auto";
+        btn.style.backgroundColor = "#2c3e50"; // Cor escura para indicar "Parar"
+        
+        let vel = document.getElementById("velocidade").value;
+        intervalo = setInterval(() => {
+            sortearUm();
+        }, parseInt(vel));
     }
 }
 
-function finalizarJogo(nomes) {
+function pararAutoSorteio() {
     sorteioEmAndamento = false;
-    if(intervalo) clearInterval(intervalo);
-    alert("🎉 BINGO VALIDADO! 🎉\nVencedor(es): " + nomes.join(", "));
+    if (intervalo) {
+        clearInterval(intervalo);
+        intervalo = null;
+    }
 }
 
 function sortearUm() {
-    if (jogadores.length < 1) return alert("Gere uma cartela primeiro!");
-    if (numerosSorteadosGlobal.length >= 75) return alert("Fim das bolas!");
+    // Verificação Crítica: Se chegar em 75, para TUDO imediatamente
+    if (numerosSorteadosGlobal.length >= 75) {
+        pararAutoSorteio();
+        document.getElementById("btn-auto").innerText = "Fim do Jogo";
+        alert("Fim do globo! Todas as 75 bolas foram sorteadas.");
+        return;
+    }
 
     let num;
     do { 
@@ -78,89 +63,31 @@ function sortearUm() {
 }
 
 function verificarVencedoresAuto() {
+    let vencedoresEncontrados = [];
     document.querySelectorAll(".jogador").forEach((div, index) => {
         let marcados = div.querySelectorAll(".sorteado").length;
-        if (marcados === 25) finalizarJogo([jogadores[index].nome]);
-    });
-}
-
-function marcarNoDOM(num) {
-    document.querySelectorAll(".cartela td").forEach(td => {
-        if (td.innerText == num) td.classList.add("sorteado");
-    });
-}
-
-function tocarSom() {
-    try {
-        const som = document.getElementById("som-sorteio");
-        if (som) {
-            som.currentTime = 0;
-            som.play();
+        if (marcados === 25) {
+            vencedoresEncontrados.push(jogadores[index].nome);
         }
-    } catch (e) { console.error("Erro ao tocar som:", e); }
-}
+    });
 
-function gerarNumerosAleatorios(quantidade, min, max) {
-    let numeros = [];
-    while (numeros.length < quantidade) {
-        let aleatorio = Math.floor(Math.random() * (max - min + 1) + min);
-        if (!numeros.includes(aleatorio)) numeros.push(aleatorio);
+    if (vencedoresEncontrados.length > 0) {
+        pararAutoSorteio(); // Para o intervalo antes de mandar o alert
+        document.getElementById("btn-auto").innerText = "Iniciar Auto";
+        alert("🎉 BINGO AUTOMÁTICO! 🎉\nVencedor(es): " + vencedoresEncontrados.join(", "));
     }
-    return numeros;
 }
 
-function gerarCartela() {
-    if (sorteioEmAndamento) return alert("O jogo já começou!");
-    let nome = prompt("Seu Nome:");
-    if (!nome || nome.trim() === "") return;
-    
-    let cartela = [
-        gerarNumerosAleatorios(5, 1, 15),
-        gerarNumerosAleatorios(5, 16, 30),
-        gerarNumerosAleatorios(5, 31, 45),
-        gerarNumerosAleatorios(5, 46, 60),
-        gerarNumerosAleatorios(5, 61, 75)
-    ];
-
-    jogadores.push({ nome: nome, cartela: cartela });
-    desenharCartela(nome, cartela);
-}
-
-function desenharCartela(nome, cartela) {
-    const div = document.getElementById("espaco-cartelas");
-    let html = `<div class="jogador"><h3>${nome}</h3><table class="cartela"><thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead><tbody>`;
-    for (let i = 0; i < 5; i++) {
-        html += "<tr>";
-        for (let j = 0; j < 5; j++) {
-            let num = (i === 2 && j === 2) ? "X" : cartela[j][i];
-            let classe = (num === "X") ? "sorteado" : "";
-            html += `<td class="${classe}" onclick="marcarManual(this)">${num}</td>`;
-        }
-        html += "</tr>";
-    }
-    html += "</tbody></table></div>";
-    div.innerHTML += html;
-}
-
-function iniciarJogo() {
-    if (jogadores.length < 1) return alert("Crie uma cartela!");
-    if (sorteioEmAndamento) return;
-    
-    sorteioEmAndamento = true;
-    let vel = document.getElementById("velocidade").value;
-    
-    intervalo = setInterval(() => {
-        if (sorteioEmAndamento) sortearUm();
-        else clearInterval(intervalo);
-    }, parseInt(vel));
-}
-
+// Atualize sua função de Reiniciar para resetar o botão também
 function reiniciarJogo() {
-    if(!confirm("Reiniciar tudo?")) return;
-    if(intervalo) clearInterval(intervalo);
+    if(!confirm("Deseja reiniciar tudo?")) return;
+    pararAutoSorteio();
     jogadores = [];
     numerosSorteadosGlobal = [];
-    sorteioEmAndamento = false;
+    document.getElementById("btn-auto").innerText = "Iniciar Auto";
+    document.getElementById("btn-auto").style.backgroundColor = "#e74c3c";
     document.getElementById("espaco-cartelas").innerHTML = "";
     document.getElementById("numeros-sorteados").innerHTML = "";
 }
+
+// Remova a função iniciarJogo antiga para não dar conflito com a toggleAutoSorteio
