@@ -3,6 +3,34 @@ var intervalo;
 var sorteioEmAndamento = false;
 var numerosSorteadosGlobal = [];
 
+// Função para esconder/mostrar botões dependendo do papel
+function alternarPapel() {
+    const papel = document.getElementById("papel-usuario").value;
+    const btnJogador = document.getElementById("grupo-jogador");
+    const btnSorteador = document.getElementById("grupo-sorteador");
+    const painelSorteio = document.getElementById("painel-sorteio");
+    const configVel = document.getElementById("div-velocidade");
+    const configAuto = document.getElementById("label-marcar-auto");
+
+    if (papel === "jogador") {
+        btnJogador.classList.remove("hidden");
+        btnSorteador.classList.add("hidden");
+        configVel.classList.add("hidden");
+        configAuto.classList.remove("hidden"); // Jogador pode querer marcação auto
+    } else if (papel === "sorteador") {
+        btnJogador.classList.add("hidden");
+        btnSorteador.classList.remove("hidden");
+        configVel.classList.remove("hidden");
+        configAuto.classList.add("hidden");
+    } else {
+        // Modo Completo/Mestre
+        btnJogador.classList.remove("hidden");
+        btnSorteador.classList.remove("hidden");
+        configVel.classList.remove("hidden");
+        configAuto.classList.remove("hidden");
+    }
+}
+
 function tocarSom() {
     const som = document.getElementById("som-sorteio");
     if (som) { som.currentTime = 0; som.play().catch(() => {}); }
@@ -19,6 +47,13 @@ function gerarNumerosAleatorios(quantidade, min, max) {
 
 function gerarCartela() {
     if (sorteioEmAndamento) return alert("O sorteio já começou!");
+    
+    // No modo jogador único, podemos limitar a 1 cartela
+    const papel = document.getElementById("papel-usuario").value;
+    if (papel === "jogador" && jogadores.length >= 1) {
+        return alert("No modo Jogador, você só pode ter 1 cartela.");
+    }
+
     var nome = prompt("Nome do Jogador:");
     if (!nome || nome.trim() === "") return;
     
@@ -57,17 +92,21 @@ function desenharCartela(nome, cartela) {
 function marcarManual(celula) {
     if (celula.innerText === "X") return;
     let num = parseInt(celula.innerText);
+    // Mesmo no modo manual, o sistema confere se o número já "saiu"
     if (numerosSorteadosGlobal.includes(num)) {
         celula.classList.toggle("sorteado");
         verificarVencedores();
     } else {
-        alert("Aguarde este número ser sorteado!");
+        alert("Este número ainda não foi sorteado!");
     }
 }
 
 function sortearUm() {
-    if (jogadores.length < 1) return alert("Gere uma cartela primeiro!");
-    if (numerosSorteadosGlobal.length >= 75) return alert("Fim do jogo!");
+    // Se for apenas sorteador, não precisa checar jogadores.length
+    const papel = document.getElementById("papel-usuario").value;
+    if (papel !== "sorteador" && jogadores.length < 1) return alert("Gere uma cartela primeiro!");
+    
+    if (numerosSorteadosGlobal.length >= 75) return alert("Fim do globo!");
 
     var num;
     do { num = Math.floor(Math.random() * 75) + 1; } while (numerosSorteadosGlobal.includes(num));
@@ -96,13 +135,16 @@ function verificarVencedores() {
         sorteioEmAndamento = false;
         clearInterval(intervalo);
         setTimeout(() => {
-            alert("🎉 BINGO! 🎉\nVencedor(es): " + vencedores.join(", "));
+            alert("🎉 BINGO! 🎉\nVencedor: " + vencedores.join(", "));
         }, 200);
     }
 }
 
 function iniciarJogo() {
-    if (sorteioEmAndamento || jogadores.length < 1) return;
+    const papel = document.getElementById("papel-usuario").value;
+    if (papel !== "sorteador" && jogadores.length < 1) return alert("Gere uma cartela primeiro!");
+    
+    if (sorteioEmAndamento) return;
     sorteioEmAndamento = true;
     let vel = document.getElementById("velocidade").value;
     intervalo = setInterval(() => {
@@ -112,7 +154,7 @@ function iniciarJogo() {
 }
 
 function reiniciarJogo() {
-    if(!confirm("Deseja reiniciar tudo?")) return;
+    if(!confirm("Deseja reiniciar o jogo?")) return;
     clearInterval(intervalo);
     jogadores = [];
     numerosSorteadosGlobal = [];
@@ -120,3 +162,6 @@ function reiniciarJogo() {
     document.getElementById("espaco-cartelas").innerHTML = "";
     document.getElementById("numeros-sorteados").innerHTML = "";
 }
+
+// Inicializa o papel ao carregar
+window.onload = alternarPapel;
