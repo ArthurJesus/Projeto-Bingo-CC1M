@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="stylesheet" href="index.css">
     <title>Bingo Master</title>
 </head>
@@ -10,18 +10,20 @@
     <header>Bingo Master</header>
     
     <main class="container">
-        <details class="opcoes-guia">
-            <summary>⚙️ Configurações do Jogo</summary>
+        <details class="opcoes-guia" id="menu-config">
+            <summary>⚙️ Configurações e Opções</summary>
             <div class="opcoes-content">
-                <label>
-                    <input type="checkbox" id="marcar-auto" checked> Marcar cartela automaticamente
+                <label class="switch-label">
+                    <input type="checkbox" id="marcar-auto" checked> 
+                    <span>Marcar automaticamente</span>
                 </label>
+                
                 <div class="controle-velocidade">
-                    <span>Velocidade do Sorteio:</span>
+                    <span>Velocidade:</span>
                     <select id="velocidade">
                         <option value="3000">Lento (3s)</option>
                         <option value="1500" selected>Normal (1.5s)</option>
-                        <option value="500">Rápido (0.5s)</option>
+                        <option value="600">Rápido (0.6s)</option>
                     </select>
                 </div>
             </div>
@@ -35,7 +37,7 @@
             
             <div class="grupo-botoes">
                 <button id="iniciar" onclick="iniciarJogo()">Auto Sorteio</button>
-                <button id="sortear-um" onclick="sortearUm()">Sortear Manual</button>
+                <button id="sortear-um" onclick="sortearUm()">Sortear</button>
             </div>
 
             <section id="area-cartela">
@@ -44,7 +46,7 @@
         </div>
 
         <div class="container-numeros">
-            <h2>Números Sorteados:</h2>
+            <h3>Sorteados:</h3>
             <div id="numeros-sorteados"></div>
         </div>
     </main>
