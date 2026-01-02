@@ -67,3 +67,20 @@ button {
 footer { position: fixed; bottom: 0; height: 40px; width: 100%; display: flex; align-items: center; justify-content: center; background-color: #2e7d32; color: white; font-size: 12px; }
 
 @media (min-width: 768px) { .container { flex-direction: row; align-items: flex-start; justify-content: center; } }
+
+.hidden { display: none !important; }
+
+.controle-papel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ccc;
+    margin-bottom: 5px;
+}
+
+/* Garante que os botões não fiquem colados no topo no modo mestre */
+.grupo-botoes { margin-top: 10px; }
+
+/* Ajuste para o painel de sorteados não sumir mas ficar discreto se for jogador */
+.container-numeros { transition: all 0.3s ease; }
