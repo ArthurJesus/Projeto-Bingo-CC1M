@@ -45,7 +45,6 @@ function desenharCartela(nome, cartela) {
         for (var j = 0; j < 5; j++) {
             let num = (i === 2 && j === 2) ? "X" : cartela[j][i];
             let classe = (num === "X") ? "sorteado" : "";
-            // Adicionamos um evento de clique para marcação manual
             html += `<td class="${classe}" onclick="marcarManual(this)">${num}</td>`;
         }
         html += "</tr>";
@@ -55,22 +54,20 @@ function desenharCartela(nome, cartela) {
     div.appendChild(container);
 }
 
-// Opção de marcar clicando na célula
 function marcarManual(celula) {
     if (celula.innerText === "X") return;
     let num = parseInt(celula.innerText);
-    // Só permite marcar se o número já tiver sido sorteado
     if (numerosSorteadosGlobal.includes(num)) {
         celula.classList.toggle("sorteado");
         verificarVencedores();
     } else {
-        alert("Este número ainda não foi sorteado!");
+        alert("Aguarde este número ser sorteado!");
     }
 }
 
 function sortearUm() {
-    if (jogadores.length < 1) return alert("Gere ao menos uma cartela!");
-    if (numerosSorteadosGlobal.length >= 75) return alert("Fim do globo!");
+    if (jogadores.length < 1) return alert("Gere uma cartela primeiro!");
+    if (numerosSorteadosGlobal.length >= 75) return alert("Fim do jogo!");
 
     var num;
     do { num = Math.floor(Math.random() * 75) + 1; } while (numerosSorteadosGlobal.includes(num));
@@ -80,18 +77,12 @@ function sortearUm() {
 
     document.getElementById("numeros-sorteados").innerHTML += `<div class="numero-sorteado">${num}</div>`;
 
-    // Se a opção "Marcar Auto" estiver ativa
     if (document.getElementById("marcar-auto").checked) {
-        marcarNoDOM(num);
+        document.querySelectorAll(".cartela td").forEach(td => {
+            if (td.innerText == num) td.classList.add("sorteado");
+        });
     }
-    
     verificarVencedores();
-}
-
-function marcarNoDOM(num) {
-    document.querySelectorAll(".cartela td").forEach(td => {
-        if (td.innerText == num) td.classList.add("sorteado");
-    });
 }
 
 function verificarVencedores() {
@@ -104,7 +95,9 @@ function verificarVencedores() {
     if (vencedores.length > 0) {
         sorteioEmAndamento = false;
         clearInterval(intervalo);
-        setTimeout(() => alert("BINGO! Vencedor(es): " + vencedores.join(", ")), 100);
+        setTimeout(() => {
+            alert("🎉 BINGO! 🎉\nVencedor(es): " + vencedores.join(", "));
+        }, 200);
     }
 }
 
@@ -119,6 +112,7 @@ function iniciarJogo() {
 }
 
 function reiniciarJogo() {
+    if(!confirm("Deseja reiniciar tudo?")) return;
     clearInterval(intervalo);
     jogadores = [];
     numerosSorteadosGlobal = [];
