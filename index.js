@@ -1,191 +1,162 @@
 var jogadores = [];
 var intervalo;
 var sorteioEmAndamento = false;
-var numerosCartela = [];
+var numerosSorteadosGlobal = []; // Renomeado para clareza
 
 function gerarNumerosAleatorios(quantidade, min, max) {
-  if (quantidade > max - min) {
-    console.log("Intervalo insuficiente ...");
-    return;
-  }
-
-  var numeros = [];
-
-  while (numeros.length < quantidade) {
-    var aleatorio = Math.floor(Math.random() * (max - min) + min);
-
-    if (!numeros.includes(aleatorio)) {
-      numeros.push(aleatorio);
+    var numeros = [];
+    while (numeros.length < quantidade) {
+        var aleatorio = Math.floor(Math.random() * (max - min + 1) + min);
+        if (!numeros.includes(aleatorio)) {
+            numeros.push(aleatorio);
+        }
     }
-  }
-
-  return numeros;
+    return numeros;
 }
 
 function gerarCartela() {
-  if (sorteioEmAndamento) {
-    alert("ERRO: Enquanto os números estão sendo sorteados não é possivel criar uma nova cartela");
-    return;
-  }
+    if (sorteioEmAndamento) {
+        alert("ERRO: O sorteio está em andamento!");
+        return;
+    }
 
-  var nomeJogador = prompt("Digite o nome do jogador:");
+    var nomeJogador = prompt("Digite o nome do jogador:");
+    if (!nomeJogador || nomeJogador.trim() === "") return;
 
-  if (!nomeJogador || nomeJogador.trim() === "") {
-    alert("ERRO: Não é possível gerar a cartela sem o nome do jogador.");
-    return;
-  }
+    // Validação simples de nome
+    if (jogadores.find(j => j.nomeJogador === nomeJogador)) {
+        alert("Este nome já está em uso!");
+        return;
+    }
 
-  var regex = /^[A-Za-zÀ-ú]+$/;
-  if (!regex.test(nomeJogador)) {
-    alert("ERRO: O nome do jogador deve conter apenas letras.");
-    return;
-  }
+    // Gerando colunas padrão Bingo (B: 1-15, I: 16-30...)
+    var cartela = [
+        gerarNumerosAleatorios(5, 1, 15),
+        gerarNumerosAleatorios(5, 16, 30),
+        gerarNumerosAleatorios(5, 31, 45),
+        gerarNumerosAleatorios(5, 46, 60),
+        gerarNumerosAleatorios(5, 61, 75)
+    ];
 
-  var jogadorExistente = jogadores.find(function(jogador) {
-    return jogador.nomeJogador === nomeJogador;
-  });
-
-  if (jogadorExistente) {
-    alert("ERRO: Já existe um jogador com esse nome. Escolha um nome diferente.");
-    return;
-  }
-
-  var cartela = [
-    gerarNumerosAleatorios(5, 1, 15),
-    gerarNumerosAleatorios(5, 16, 30),
-    gerarNumerosAleatorios(5, 31, 45),
-    gerarNumerosAleatorios(5, 46, 60),
-    gerarNumerosAleatorios(5, 61, 75)
-  ];
-
-  jogadores.push({
-    nomeJogador: nomeJogador,
-    cartela: cartela
-  });
-
-  desenharCartela(nomeJogador, cartela);
-
-  console.log(jogadores);
+    jogadores.push({ nomeJogador: nomeJogador, cartela: cartela });
+    desenharCartela(nomeJogador, cartela);
 }
 
 function desenharCartela(nome, cartela) {
-  var div = document.getElementById("espaco-cartelas");
+    var div = document.getElementById("espaco-cartelas");
+    var jogadorDiv = document.createElement("div");
+    jogadorDiv.classList.add("jogador");
+    jogadorDiv.innerHTML = `<h3>${nome}</h3>`;
 
-  var jogadorDiv = document.createElement("div");
-  jogadorDiv.classList.add("jogador");
+    var tabela = document.createElement("table");
+    tabela.classList.add("cartela");
 
-  var nomeJogadorDiv = document.createElement("h3");
-  nomeJogadorDiv.innerText = nome;
-  jogadorDiv.appendChild(nomeJogadorDiv);
+    // Cabeçalho BINGO
+    var thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr>";
+    tabela.appendChild(thead);
 
-  var tabela = document.createElement("table");
-  tabela.classList.add("cartela");
-
-  var thead = document.createElement("thead");
-
-  var thB = document.createElement("th");
-  thB.innerText = "B";
-  var thI = document.createElement("th");
-  thI.innerText = "I";
-  var thN = document.createElement("th");
-  thN.innerText = "N";
-  var thG = document.createElement("th");
-  thG.innerText = "G";
-  var thO = document.createElement("th");
-  thO.innerText = "O";
-
-  thead.appendChild(thB);
-  thead.appendChild(thI);
-  thead.appendChild(thN);
-  thead.appendChild(thG);
-  thead.appendChild(thO);
-
-  for (var i = 0; i < 5; i++) {
-    var tr = document.createElement("tr");
-    for (var j = 0; j < 5; j++) {
-      var td = document.createElement("td");
-      if (i === 2 && j === 2) {
-        td.innerText = "X";
-        tr.appendChild(td);
-      } else {
-        td.innerText = cartela[j][i];
-        tr.appendChild(td);
-      }
+    // Corpo da Cartela
+    for (var i = 0; i < 5; i++) {
+        var tr = document.createElement("tr");
+        for (var j = 0; j < 5; j++) {
+            var td = document.createElement("td");
+            if (i === 2 && j === 2) {
+                td.innerText = "X";
+                td.classList.add("sorteado"); // O centro já começa marcado
+            } else {
+                td.innerText = cartela[j][i];
+            }
+            tr.appendChild(td);
+        }
+        tabela.appendChild(tr);
     }
-    tabela.appendChild(tr);
-  }
 
-  tabela.appendChild(thead);
-  jogadorDiv.appendChild(tabela);
-  div.appendChild(jogadorDiv);
+    jogadorDiv.appendChild(tabela);
+    div.appendChild(jogadorDiv);
 }
 
 function iniciarJogo() {
-  if (jogadores.length < 2) {
-    alert("ERRO: Para iniciar o jogo é obrigatório ter pelo menos 2 jogadores.");
-    return;
-  }
+    if (jogadores.length < 2) {
+        alert("É necessário pelo menos 2 jogadores!");
+        return;
+    }
+    if (sorteioEmAndamento) return;
 
-  if (sorteioEmAndamento) {
-    alert("ERRO: O sorteio dos números já está em andamento.");
-    return;
-  }
+    sorteioEmAndamento = true;
+    var painelSorteio = document.getElementById("numeros-sorteados");
+    painelSorteio.innerHTML = "";
+    numerosSorteadosGlobal = [];
 
-  if (jogadores.length === 0) {
-    alert("ERRO: É preciso criar as cartelas antes de iniciar o jogo.");
-    return;
-  }
+    intervalo = setInterval(function() {
+        if (numerosSorteadosGlobal.length >= 75) {
+            clearInterval(intervalo);
+            return;
+        }
 
-  sorteioEmAndamento = true;
+        var numeroSorteado;
+        do {
+            numeroSorteado = Math.floor(Math.random() * 75) + 1;
+        } while (numerosSorteadosGlobal.includes(numeroSorteado));
 
-  var numerosCartelaDiv = document.getElementById("numeros-sorteados");
-  numerosCartelaDiv.innerHTML = "";
+        numerosSorteadosGlobal.push(numeroSorteado);
+        
+        // Criar elemento visual da bola
+        var bola = document.createElement("div");
+        bola.classList.add("numero-sorteado");
+        bola.innerText = numeroSorteado;
+        painelSorteio.appendChild(bola);
 
-  numerosCartela = [];
-  var numeroSorteado = 0;
-  intervalo = setInterval(function() {
-    do {
-      numeroSorteado = Math.floor(Math.random() * 75) + 1;
-    } while (numerosCartela.includes(numeroSorteado));
+        marcarNumeroSorteado(numeroSorteado);
 
-    numerosCartela.push(numeroSorteado);
-    numerosCartelaDiv.innerHTML += "<div class='numero-sorteado'>" + numeroSorteado + "</div>";
-
-    marcarNumeroSorteado(numeroSorteado);
-
-    var ganhadores = verificarGanhadores();
-
-    if (ganhadores.length > 0) {
-      clearInterval(intervalo);
-      var nomesGanhadores = ganhadores.map(function(jogador) {
-        return jogador.nomeJogador;
-      });
-      alert("Os jogadores vencedores são: " + nomesGanhadores.join(", "));
-      sorteioEmAndamento = false;
-      alert("O jogo acabou. Reiniciando.")
-      setTimeout(function() {
-        reiniciarJogo();
-      }, 2500); 
+        var ganhadores = verificarGanhadores();
+        if (ganhadores.length > 0) {
+            clearInterval(intervalo);
+            sorteioEmAndamento = false;
+            alert("BINGO! Vencedores: " + ganhadores.map(g => g.nomeJogador).join(", "));
+        }
+    }, 500); // 500ms para dar tempo de ver a marcação
 }
 
-    if (numerosCartela.length === 75) {
-      clearInterval(intervalo);
+function marcarNumeroSorteado(numero) {
+    var tds = document.querySelectorAll(".cartela td");
+    tds.forEach(td => {
+        if (td.innerText == numero) {
+            td.classList.add("sorteado");
+        }
+    });
+}
 
-      if (ganhadores.length === 0) {
-        alert("Não houve ganhadores. O jogo terminou.");
-      }
-
-      sorteioEmAndamento = false;
-    }
-  }, 100);
+function verificarGanhadores() {
+    var vencedores = [];
+    
+    jogadores.forEach(jogador => {
+        var totalMarcados = 0;
+        // Percorre a cartela 5x5
+        for (var col = 0; col < 5; col++) {
+            for (var lin = 0; lin < 5; lin++) {
+                var num = jogador.cartela[col][lin];
+                // Se for o centro (X) ou se o número já foi sorteado
+                if ((col === 2 && lin === 2) || numerosSorteadosGlobal.includes(num)) {
+                    totalMarcados++;
+                }
+            }
+        }
+        if (totalMarcados === 25) {
+            vencedores.push(jogador);
+        }
+    });
+    return vencedores;
 }
 
 function reiniciarJogo() {
-  if (intervalo) {
     clearInterval(intervalo);
-    intervalo = null;
-    console.log("Sorteio dos números interrompido.");
-  }
+    jogadores = [];
+    numerosSorteadosGlobal = [];
+    sorteioEmAndamento = false;
+    document.getElementById("espaco-cartelas").innerHTML = "";
+    document.getElementById("numeros-sorteados").innerHTML = "";
+}
 
   jogadores = [];
   numerosCartela = [];
