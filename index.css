@@ -1,176 +1,143 @@
-body {
-    margin: 0;
-    margin-bottom: 50px;
-}
-
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    text-decoration: none;
-    list-style: none;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #f0f2f5; /* Cor de fundo suave */
+    padding-bottom: 60px;
 }
 
 header {
-    background-color: green;
+    background-color: #2e7d32;
     color: white;
-    height: 100px;
-    width: 100%;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0;
-    padding: 0;
-    font-size: 32px;
+    font-size: 24px;
     font-weight: bold;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 footer {
     position: fixed;
-    bottom: 0px;
-    height: 30px;
+    bottom: 0;
+    height: 40px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: green;
+    background-color: #2e7d32;
     color: white;
+    font-size: 12px;
 }
 
 .container {
-    flex-wrap: wrap;
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    gap: 20px;
 }
 
-#gerar {
-    background-color: lightskyblue;
-    color: white;
+.jogo {
+    width: 100%;
+    max-width: 600px;
+}
+
+.grupo-botoes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    flex: 1;
     height: 50px;
-    width: 150px;
-    border: 3px solid lightskyblue;
-    cursor: pointer;
-    border-radius: 15px;
-    font-size: 20px;
-    margin: 20px 20px 0 0;
-    font-weight: bold;
-}
-
-#gerar:hover{
-    background-color: lightblue;
-    border: 3px solid lightblue;
-}
-
-#gerar:active{
-    background-color: lightsteelblue;
-    border: 3px solid lightsteelblue;
-}
-
-#resetar {
-    background-color: lightseagreen;
+    border: none;
+    border-radius: 12px;
     color: white;
-    height: 50px;
-    width: 150px;
-    border: 3px solid lightseagreen;
-    cursor: pointer;
-    border-radius: 15px;
-    font-size: 20px;
-    margin: 20px 0 0 20px;
+    font-size: 16px;
     font-weight: bold;
-}
-
-#resetar:hover{
-    background-color: lightgreen;
-    border: 3px solid lightgreen;
-}
-
-#resetar:active{
-    background-color: greenyellow;
-    border: 3px solid greenyellow;
-}
-
-#iniciar {
-    background-color: lightcoral;
-    color: white;
-    height: 50px;
-    width: 150px;
-    border: 3px solid lightcoral;
     cursor: pointer;
-    border-radius: 15px;
-    font-size: 20px;
-    margin: 20px;
-    font-weight: bold;
+    transition: opacity 0.2s;
 }
 
-#iniciar:hover{
-    background-color: lightsalmon;
-    border: 3px solid lightsalmon;
+button:active { opacity: 0.7; }
+
+#gerar { background-color: #3498db; }
+#resetar { background-color: #16a085; }
+#iniciar { background-color: #e74c3c; }
+#sortear-um { background-color: #9b59b6; }
+
+#espaco-cartelas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
 }
 
-#iniciar:active{
-    background-color: lightpink;
-    border: 3px solid lightpink;
-}
-
-#numeros-sorteados {
-    font-size: 20px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    word-break: normal;
-}
-
-.container-numeros {
-    width: 30%;
-}
-
-.cartela-container {
-    flex-basis: calc(50% - 10px);
-    margin-bottom: 20px;
+.jogador {
+    background: white;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
 }
 
 .cartela {
-    border: 2px solid black;
-    width: 300px;
-    height: 300px;
     border-collapse: collapse;
-}
-
-.cartela td {
-    padding: 10px;
-    text-align: center;
-    border: 1px solid black;
-    font-size: 24px;
-}
-
-.cartela td:not(:nth-child(6n)) {
-    border-right: none;
-}
-
-.cartela tr:not(:last-child) td {
-    border-bottom: none;
+    margin-top: 10px;
 }
 
 .cartela th {
+    background-color: #3498db;
+    color: white;
+    padding: 8px;
+}
+
+.cartela td {
+    border: 1px solid #ddd;
     padding: 10px;
+    font-size: 18px;
     text-align: center;
-    font-size: 26px;
-    font-weight: bold;
-    background-color: lightskyblue;
+    min-width: 45px;
 }
 
 .sorteado {
-    background-color: #2ecc71 !important; /* Verde mais moderno */
+    background-color: #2ecc71 !important;
     color: white;
-    transition: background-color 0.3s ease;
     font-weight: bold;
 }
 
-/* Deixar as bolinhas do sorteio mais bonitas */
+.container-numeros {
+    width: 100%;
+    text-align: center;
+}
+
+#numeros-sorteados {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 15px;
+}
+
 .numero-sorteado {
-    background-color: #f1c40f; /* Amarelo */
+    width: 40px;
+    height: 40px;
+    background-color: #f1c40f;
     border: 2px solid #f39c12;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-weight: bold;
-    animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: pop 0.3s ease-out;
 }
 
 @keyframes pop {
@@ -178,21 +145,8 @@ footer {
     100% { transform: scale(1); }
 }
 
-#sortear-um {
-    background-color: mediumpurple;
-    color: white;
-    height: 50px;
-    width: 150px;
-    border: 3px solid mediumpurple;
-    cursor: pointer;
-    border-radius: 15px;
-    font-size: 16px; /* Texto um pouco menor para caber */
-    margin: 20px;
-    font-weight: bold;
-}
-
-.jogador {
-    display: inline-block;
-    margin-right: 20px;
-    margin-top: 15px;
+/* Ajuste Desktop */
+@media (min-width: 768px) {
+    .container { flex-direction: row; align-items: flex-start; }
+    .container-numeros { width: 40%; }
 }
