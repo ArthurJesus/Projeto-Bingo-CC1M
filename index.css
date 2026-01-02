@@ -178,6 +178,19 @@ footer {
     100% { transform: scale(1); }
 }
 
+#sortear-um {
+    background-color: mediumpurple;
+    color: white;
+    height: 50px;
+    width: 150px;
+    border: 3px solid mediumpurple;
+    cursor: pointer;
+    border-radius: 15px;
+    font-size: 16px; /* Texto um pouco menor para caber */
+    margin: 20px;
+    font-weight: bold;
+}
+
 .jogador {
     display: inline-block;
     margin-right: 20px;
